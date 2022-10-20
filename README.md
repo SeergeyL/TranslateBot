@@ -1,6 +1,7 @@
 # TranslateBot
 
 ## List of available commands:
+Telegram Bot can perform following commands:
 
 /switch - there are two available translation mods: synchronous translation (**sync**) and selective (**selective**). Selective mode translates messages if they are marked by `MESSASAGE_MARKER` in any place in the text. Synchronous translation translates all messages.
 
