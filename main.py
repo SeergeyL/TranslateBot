@@ -9,7 +9,11 @@ load_dotenv()
 
 
 # Environment variables
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+DEBUG = True
+if DEBUG:
+    TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN_DEBUG')
+else:
+    TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 MESSAGE_MARKER = '🇬🇧'
 
 
@@ -29,7 +33,8 @@ class TranslationMode(Enum):
 
 
 configuration = {
-    'mode': TranslationMode.SELECTIVE
+    'default_mode': TranslationMode.SELECTIVE,
+    'mode': {}
 }
 
 
@@ -43,9 +48,12 @@ def check_message_marker(message: str):
     return MESSAGE_MARKER in message
 
 
-def create_status_message(sep='\n'):
+def create_status_message(message: types.Message, sep='\n'):
+    chat_id = message.chat.id
+    if chat_id not in configuration['mode']:
+        setup_configuration(chat_id)
     text = (
-        f"Translation mode: *{configuration['mode'].value}*",
+        f"Translation mode: *{configuration['mode'][chat_id].value}*",
     )
     return sep.join(text)
 
@@ -62,24 +70,32 @@ def create_help_message():
     return '\n'.join(text)
 
 
+def setup_configuration(chat_id: int):
+    if chat_id not in configuration['mode']:
+        configuration['mode'][chat_id] = configuration['default_mode']
+
+
 @dp.message_handler(commands=['switch'])
 async def handle_change_translation_mode(message: types.Message):
+    chat_id = message.chat.id
+    if chat_id not in configuration['mode']:
+        setup_configuration(chat_id)
 
-    match configuration['mode']:
+    match configuration['mode'][chat_id]:
         case TranslationMode.SELECTIVE:
-            configuration['mode'] = TranslationMode.SYNC
+            configuration['mode'][chat_id] = TranslationMode.SYNC
         case TranslationMode.SYNC:
-            configuration['mode'] = TranslationMode.SELECTIVE
+            configuration['mode'][chat_id] = TranslationMode.SELECTIVE
 
     await message.answer(
-        f"Translation mode changed to *{configuration['mode'].value}*",
+        f"Translation mode changed to *{configuration['mode'][chat_id].value}*",
         parse_mode='Markdown'
     )
 
 
 @dp.message_handler(commands=['status'])
 async def handle_status(message: types.Message):
-    await message.answer(create_status_message(), parse_mode='Markdown')
+    await message.answer(create_status_message(message), parse_mode='Markdown')
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -90,6 +106,8 @@ async def handle_menu(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(description_btn)
     keyboard.row(status_btn, switch_btn)
+
+    setup_configuration(message.chat.id)
 
     help_message = create_help_message()
     await message.answer(
@@ -104,11 +122,13 @@ async def handle_message(message: types.Message):
     if message.text.startswith('/'):
         await message.answer('Command is not recognized')
 
-    if configuration['mode'] == TranslationMode.SYNC:
+    chat_id = message.chat.id
+
+    if configuration['mode'][chat_id] == TranslationMode.SYNC:
         translated = translate_message(message)
         await message.reply(translated)
 
-    elif configuration['mode'] == TranslationMode.SELECTIVE:
+    elif configuration['mode'][chat_id] == TranslationMode.SELECTIVE:
         if not check_message_marker(message.text):
             return
         translated = translate_message(message)
