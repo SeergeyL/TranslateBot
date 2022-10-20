@@ -8,20 +8,20 @@ class TranslationService:
     def __init__(self, service_urls, **kwargs):
         self.translator = Translator(service_urls=service_urls, **kwargs)
 
-    def check_language(self, message: str) -> bool:
+    def should_translate(self, message: str) -> bool:
         lang = self.translator.detect(message)
         is_destination_lang = lang.lang == config.DESTINATION_LANGUAGE
         lang_confidence = lang.confidence > config.CONFIDENCE_THRESHOLD
-        if  is_destination_lang and lang_confidence:
-            return True
-        return False
+        if is_destination_lang and lang_confidence:
+            return False
+        return True
 
     def translate(
         self,
         text: str,
         mode: config.TranslationMode,
     ) -> None | str:
-        if self.check_language(text):
+        if not self.should_translate(text):
             return None
 
         if mode == config.TranslationMode.SYNC:
