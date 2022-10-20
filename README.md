@@ -7,3 +7,19 @@
 /status - show current state of variables
 
 /help - show help message
+
+## Run Container
+Copy environment variables from example file and add `TELEGRAM_TOKEN`
+```
+cp .env.example .env
+```
+
+Build the image
+```
+docker build -t bot .
+```
+Run container
+```
+docker run bot
+```
+
