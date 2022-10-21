@@ -16,6 +16,9 @@ class TranslationService:
             return False
         return True
 
+    def check_message_marker(self, text):
+        return any([marker in text for marker in config.MESSAGE_MARKER_LIST])
+
     def translate(
         self,
         text: str,
@@ -31,7 +34,7 @@ class TranslationService:
             )
             return RESPONSE_TEXT['translated'].format(text=translated.text)
 
-        if config.MESSAGE_MARKER not in text:
+        if not self.check_message_marker(text):
             return None
 
         translated = self.translator.translate(
