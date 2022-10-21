@@ -16,7 +16,7 @@ Telegram Bot can perform following commands:
 
 `TELEGRAM_TOKEN` - Bot token which can be obtained from BotFather
 
-`CONFIDENCE_THRESHOLD` - confidence level that the received message already translated to `DESTINATION_LANGUAGE`. Messages with confidence higher than threshold won't be translated
+`CONFIDENCE_THRESHOLD` - confidence level that the received message already translated to destination language. Messages with confidence higher than threshold won't be translated
 
 ## Run Container
 Copy environment variables from example file and add `TELEGRAM_TOKEN`
