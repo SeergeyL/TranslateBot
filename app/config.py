@@ -10,6 +10,7 @@ load_dotenv()
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 MESSAGE_MARKER = os.getenv('MESSAGE_MARKER')
 DESTINATION_LANGUAGE = os.getenv('DESTINATION_LANGUAGE')
+CONFIDENCE_THRESHOLD = float(os.getenv('CONFIDENCE_THRESHOLD'))
 
 
 class TranslationMode(Enum):
