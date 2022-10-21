@@ -10,7 +10,7 @@ Telegram Bot can perform following commands:
 /help - show help message
 
 ## Environment Variables
-`MESSASAGE_MARKER` - In selective mode marked message will be translated.
+`MESSASAGE_MARKER` - In selective mode marked message will be translated. List of markers can be provided with comma divider
 
 `DESTINATION_LANGUAGE` - The 2 character language code into which the translation will be carried out. More in [googletrans](https://pypi.org/project/googletrans/) docs
 
