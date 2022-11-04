@@ -5,7 +5,7 @@ from labels import RESPONSE_TEXT
 
 
 class TranslationService:
-    def __init__(self, service_urls, **kwargs):
+    def __init__(self, service_urls: list, **kwargs):
         self.translator = Translator(service_urls=service_urls, **kwargs)
 
     def should_translate(self, message: str) -> bool:
@@ -16,7 +16,7 @@ class TranslationService:
             return False
         return True
 
-    def check_message_marker(self, text):
+    def check_message_marker(self, text: str) -> bool:
         return any([marker in text for marker in config.MESSAGE_MARKER_LIST])
 
     def translate(
