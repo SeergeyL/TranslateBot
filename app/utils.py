@@ -4,7 +4,7 @@ from config import ChatSettings, TranslationMode
 from aiogram import types
 
 
-def setup_chat_settings(chat_id: int, *, config: dict = None):
+def setup_chat_settings(chat_id: int, *, config: dict):
     if chat_id not in config:
         config[chat_id] = ChatSettings()
 
